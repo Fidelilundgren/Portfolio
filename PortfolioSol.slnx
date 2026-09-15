@@ -1,3 +1,15 @@
 <Solution>
+  <Folder Name="/1. Domain/">
+    <Project Path="Portfolio.Domain/Portfolio.Domain.csproj" />
+  </Folder>
+  <Folder Name="/2. Application/">
+    <Project Path="Portfolio.Application/Portfolio.Application.csproj" />
+  </Folder>
+  <Folder Name="/3. Infrastructure/">
+    <Project Path="Portfolio.Infrastructure/Portfolio.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/4. Presentation/">
+    <Project Path="Portfolio.Presentation/Portfolio.Presentation.csproj" />
+  </Folder>
   <Project Path="Portfolio/Portfolio.csproj" />
 </Solution>
