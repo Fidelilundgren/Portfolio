@@ -9,7 +9,6 @@
     <Project Path="Portfolio.Infrastructure/Portfolio.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/4. Presentation/">
-    <Project Path="Portfolio.Presentation/Portfolio.Presentation.csproj" />
+    <Project Path="Portfolio/Portfolio.csproj" />
   </Folder>
-  <Project Path="Portfolio/Portfolio.csproj" />
 </Solution>
