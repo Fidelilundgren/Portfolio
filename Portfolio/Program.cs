@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Portfolio.Application.Interfaces;
+using Portfolio.Application.Services;
 using Portfolio.Components;
+using Portfolio.Infrastructure.Repositories;
 
 
 
@@ -17,6 +20,9 @@ namespace Portfolio
 
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+            builder.Services.AddScoped<IMenuService, MenuService>();
 
             var app = builder.Build();
 
