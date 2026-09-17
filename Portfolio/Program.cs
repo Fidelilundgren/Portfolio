@@ -4,8 +4,6 @@ using Portfolio.Application.Services;
 using Portfolio.Components;
 using Portfolio.Infrastructure.Repositories;
 
-
-
 namespace Portfolio
 {
     public class Program

@@ -1,8 +1,5 @@
 ﻿using Portfolio.Application.Interfaces;
 using Portfolio.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Portfolio.Application.Services;
 
@@ -28,5 +25,4 @@ public class MenuService : IMenuService
 
     public async Task DeleteAsync(int id)
         => await _menuRepository.DeleteAsync(id);
-    
 }

@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portfolio.Application.Interfaces;
 using Portfolio.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Portfolio.Infrastructure.Repositories;
 
 public class BlockRepository : IBlockRepository
@@ -14,6 +10,7 @@ public class BlockRepository : IBlockRepository
     {
         _context = appDbContext;
     }
+
     public async Task<List<Block>> GetAllAsync()
         => await _context.Blocks
         .OrderBy(b => b.Order)
@@ -51,9 +48,4 @@ public class BlockRepository : IBlockRepository
             await _context.SaveChangesAsync();
         }
     }
-    
-
-    
-
-    
 }
