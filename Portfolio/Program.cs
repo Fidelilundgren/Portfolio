@@ -23,6 +23,8 @@ namespace Portfolio
 
             builder.Services.AddScoped<IMenuRepository, MenuRepository>();
             builder.Services.AddScoped<IMenuService, MenuService>();
+            builder.Services.AddScoped<IBlockRepository, BlockRepository>();
+            builder.Services.AddScoped<IBlockService, BlockService>();
 
             var app = builder.Build();
 
