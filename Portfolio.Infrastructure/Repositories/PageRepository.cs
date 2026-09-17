@@ -11,6 +11,7 @@ public class PageRepository : IPageRepository
     {
         _context = appDbContext;
     }
+
     public async Task<List<Page>> GetAllAsync()
         => await _context.Pages
         .ToListAsync();

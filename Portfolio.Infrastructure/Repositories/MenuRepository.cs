@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portfolio.Application.Interfaces;
 using Portfolio.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Portfolio.Infrastructure.Repositories;
 
@@ -30,6 +27,12 @@ public class MenuRepository : IMenuRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateAsync(Menu menu)
+    {
+        _context.Menus.Update(menu);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var item = await _context.Menus.FindAsync(id);
@@ -38,14 +41,5 @@ public class MenuRepository : IMenuRepository
             _context.Menus.Remove(item);
             await _context.SaveChangesAsync();
         }
-    }
-
-    
-
-   
-
-    public Task UpdateAsync(Menu menu)
-    {
-        throw new NotImplementedException();
     }
 }

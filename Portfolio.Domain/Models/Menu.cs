@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Portfolio.Domain.Models;
+﻿namespace Portfolio.Domain.Models;
 
 public class Menu
 {
