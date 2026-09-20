@@ -1,0 +1,33 @@
+﻿@page "/admin/pages/create"
+@using Portfolio.Application.Dtos
+@using Portfolio.Application.Interfaces
+@inject IPageService PageService
+
+<h3>Create Page</h3>
+
+<EditForm Model="pageDto" OnSubmit="AddPage">
+    <DataAnnotationsValidator/>
+
+    <div>
+        <label>Title:</label>
+        <InputText @bind-Value="pageDto.Title"/>
+        <ValidationMessage For="@(() => pageDto.Title)" />
+    </div>
+
+    <button type="submit">Create</button>
+</EditForm>
+
+@code {
+
+    public PageDto pageDto { get; set; } = new();
+
+    public async Task AddPage(EditContext editContext)
+    {
+        bool isValid = editContext.Validate();
+
+        if (isValid)
+        {
+            await PageService.AddAsync(pageDto);
+        }
+    }
+}

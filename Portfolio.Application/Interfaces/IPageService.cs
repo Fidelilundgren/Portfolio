@@ -1,12 +1,13 @@
-﻿using Portfolio.Domain.Models;
+﻿using Portfolio.Application.Dtos;
+using Portfolio.Domain.Models;
 
 namespace Portfolio.Application.Interfaces;
 
 public interface IPageService
 {
-    Task<List<Page>> GetAllAsync();
-    Task<Page?> GetByIdAsync(int id);
-    Task AddAsync(Page page);
-    Task UpdateAsync(Page page);
+    Task<List<PageDto>> GetAllAsync();
+    Task<PageDto?> GetByIdAsync(int id);
+    Task AddAsync(PageDto dto);
+    Task UpdateAsync(PageDto page);
     Task DeleteAsync(int id);
 }
