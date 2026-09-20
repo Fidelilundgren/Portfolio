@@ -1,4 +1,5 @@
-﻿using Portfolio.Application.Interfaces;
+﻿using Portfolio.Application.Dtos;
+using Portfolio.Application.Interfaces;
 using Portfolio.Domain.Models;
 
 namespace Portfolio.Application.Services;
@@ -11,17 +12,55 @@ public class PageService : IPageService
         _pageRepository = pageRepository;
     }
 
-    public async Task<List<Page>> GetAllAsync()
-        => await _pageRepository.GetAllAsync();
+    public async Task<List<PageDto>> GetAllAsync()
+    {
+        var pages = await _pageRepository.GetAllAsync();
 
-    public async Task<Page?> GetByIdAsync(int id)
-        => await _pageRepository.GetByIdAsync(id);
+        return pages.Select(p => new PageDto 
+        { 
+            Id = p.Id, 
+            Title = p.Title, 
+            VisitCount = p.VisitCount 
+        }).ToList();
+    }
 
-    public async Task AddAsync(Page page)
-        => await _pageRepository.AddAsync(page);
+    public async Task<PageDto?> GetByIdAsync(int id)
+    {
+        var page = await _pageRepository.GetByIdAsync(id);
 
-    public async Task UpdateAsync(Page page)
-        => await _pageRepository.UpdateAsync(page);
+        if (page == null)
+        {
+            return null;
+        }
+
+        return new PageDto
+        {
+            Id = page.Id,
+            Title = page.Title,
+            VisitCount = page.VisitCount
+        };
+    }
+
+    public async Task AddAsync(PageDto pageDto)
+    {
+        var page = new Page
+        {
+            Title = pageDto.Title
+        };
+
+        await _pageRepository.AddAsync(page);
+    }
+
+    public async Task UpdateAsync(PageDto pageDto)
+    {
+        var page = await _pageRepository.GetByIdAsync(pageDto.Id);
+
+        if (page != null)
+        {
+            page.Title = pageDto.Title;
+            await _pageRepository.UpdateAsync(page);
+        }
+    }
 
     public async Task DeleteAsync(int id)
         => await _pageRepository.DeleteAsync(id);
