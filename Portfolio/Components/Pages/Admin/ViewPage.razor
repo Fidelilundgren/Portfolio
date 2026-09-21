@@ -1,0 +1,23 @@
+﻿@page "/admin/pages/view"
+@using Portfolio.Application.Dtos
+@using Portfolio.Application.Interfaces
+@inject IPageService PageService
+
+<h3>Pages</h3>
+
+@foreach(var p in Pages)
+{
+    <div>
+        <p>@p.Title</p>
+        <p>@p.VisitCount</p>
+    </div>
+}
+
+@code {
+
+    public List<PageDto> Pages { get; set; } = [];
+    protected override async Task OnInitializedAsync()
+    {
+        Pages = await PageService.GetAllAsync();
+    }
+}
