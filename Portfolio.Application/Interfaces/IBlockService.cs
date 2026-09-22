@@ -1,13 +1,13 @@
-﻿using Portfolio.Domain.Models;
+﻿using Portfolio.Application.Dtos;
 
 namespace Portfolio.Application.Interfaces;
 
 public interface IBlockService
 {
-    Task<List<Block>> GetAllAsync();
-    Task<Block?> GetByIdAsync(int id);
-    Task<List<Block>> GetByPageIdAsync(int pageId);
-    Task AddAsync(Block block);
-    Task UpdateAsync(Block block);
+    Task<List<BlockDto>> GetAllAsync();
+    Task<BlockDto?> GetByIdAsync(int id);
+    Task<List<BlockDto>> GetByPageIdAsync(int pageId);
+    Task AddAsync(BlockDto block);
+    Task UpdateAsync(BlockDto block);
     Task DeleteAsync(int id);
 }

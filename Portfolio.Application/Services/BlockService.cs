@@ -1,4 +1,5 @@
-﻿using Portfolio.Application.Interfaces;
+﻿using Portfolio.Application.Dtos;
+using Portfolio.Application.Interfaces;
 using Portfolio.Domain.Models;
 
 namespace Portfolio.Application.Services;
@@ -11,21 +12,100 @@ public class BlockService : IBlockService
         _blockRepository = blockRepository;
     }
 
-    public async Task<List<Block>> GetAllAsync()
-        => await _blockRepository.GetAllAsync();
+    public async Task<List<BlockDto>> GetAllAsync()
+    {
+        var blocks = await _blockRepository.GetAllAsync();
 
-    public async Task<Block?> GetByIdAsync(int id)
-        => await _blockRepository.GetByIdAsync(id);
+        return blocks.Select(b => new BlockDto 
+        { 
+            Id = b.Id, 
+            Type = b.Type,
+            Order = b.Order, 
+            TextContent = b.TextContent, 
+            ImageUrl = b.ImageUrl, 
+            LinkUrl = b.LinkUrl, 
+            LinkText = b.LinkText,
+            CssClass = b.CssClass,
+            PageId = b.PageId
+        }).ToList();
+    }
 
-    public async Task<List<Block>> GetByPageIdAsync(int pageId)
-        => await _blockRepository.GetByPageIdAsync(pageId);
+    public async Task<BlockDto?> GetByIdAsync(int id)
+    {
+        var block = await _blockRepository.GetByIdAsync(id);
 
-    public async Task AddAsync(Block block)
-        => await _blockRepository.AddAsync(block);
+        if (block == null)
+        {
+            return null;
+        }
+        return new BlockDto
+        {
+            Id = block.Id,
+            Type = block.Type,
+            Order = block.Order,
+            TextContent = block.TextContent,
+            ImageUrl = block.ImageUrl,
+            LinkUrl = block.LinkUrl,
+            LinkText = block.LinkText,
+            CssClass = block.CssClass,
+            PageId = block.PageId
+        };
+    }
+
+    public async Task<List<BlockDto>> GetByPageIdAsync(int pageId)
+    {
+        var blocks = await _blockRepository.GetByPageIdAsync(pageId);
+
+        return blocks.Select(b => new BlockDto
+        {
+            Id = b.Id,
+            Type = b.Type,
+            Order = b.Order,
+            TextContent = b.TextContent,
+            ImageUrl = b.ImageUrl,
+            LinkUrl = b.LinkUrl,
+            LinkText = b.LinkText,
+            CssClass = b.CssClass,
+            PageId = b.PageId
+        }).ToList();
+    }
+
+    public async Task AddAsync(BlockDto blockDto)
+    {
+        var block = new Block
+        {
+            Type = blockDto.Type,
+            Order = blockDto.Order,
+            TextContent = blockDto.TextContent,
+            ImageUrl = blockDto.ImageUrl,
+            LinkUrl = blockDto.LinkUrl,
+            LinkText = blockDto.LinkText,
+            CssClass = blockDto.CssClass,
+            PageId = blockDto.PageId
+        };
+
+        await _blockRepository.AddAsync(block);
+    }
+
+    public async Task UpdateAsync(BlockDto blockDto)
+    {
+        var block = await _blockRepository.GetByIdAsync(blockDto.Id);
+
+        if (block != null)
+        {
+            block.Type = blockDto.Type;
+            block.Order = blockDto.Order;
+            block.TextContent = blockDto.TextContent;
+            block.ImageUrl = blockDto.ImageUrl;
+            block.LinkUrl = blockDto.LinkUrl;
+            block.LinkText = blockDto.LinkText;
+            block.CssClass = blockDto.CssClass;
+            block.PageId = blockDto.PageId;
+
+            await _blockRepository.UpdateAsync(block);
+        }
+    }
 
     public async Task DeleteAsync(int id)
         => await _blockRepository.DeleteAsync(id);
-
-    public async Task UpdateAsync(Block block)
-        => await _blockRepository.UpdateAsync(block);
 }

@@ -1,0 +1,57 @@
+﻿@page "/admin/blocks/create"
+@using Portfolio.Application.Dtos
+@using Portfolio.Application.Interfaces
+@inject IPageService PageService
+@inject IBlockService BlockService
+
+<h3>Create Heading</h3>
+
+<EditForm Model="@blockDto" OnSubmit="AddHeading">
+    <DataAnnotationsValidator/>
+
+    <div>
+        <label>Page:</label>
+        <InputSelect @bind-Value="blockDto.PageId">
+            @foreach (var p in Pages)
+            {
+                <option value="@p.Id">@p.Title</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div>
+        <label>Heading:</label>
+        <InputText @bind-Value="blockDto.TextContent"/>
+    </div>
+
+    <div>
+        <label>Order:</label>
+        <InputNumber @bind-Value="blockDto.Order"/>
+    </div>
+
+    <div>
+        <label>Style:</label>
+
+    </div>
+    <button type="submit">Create Heading</button>
+</EditForm>
+
+@code {
+    public BlockDto blockDto { get; set; } = new();
+    public List<PageDto> Pages { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        Pages = await PageService.GetAllAsync();
+    }
+
+    public async Task AddHeading(EditContext editContext)
+    {
+        bool isValid = editContext.Validate();
+
+        if (isValid)
+        {
+            
+        }
+    }
+}

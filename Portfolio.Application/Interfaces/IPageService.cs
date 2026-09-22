@@ -1,5 +1,4 @@
 ﻿using Portfolio.Application.Dtos;
-using Portfolio.Domain.Models;
 
 namespace Portfolio.Application.Interfaces;
 
