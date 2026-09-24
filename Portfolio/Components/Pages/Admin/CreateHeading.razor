@@ -1,17 +1,20 @@
 ﻿@page "/admin/blocks/create"
 @using Portfolio.Application.Dtos
 @using Portfolio.Application.Interfaces
+@using Portfolio.ViewModels
 @inject IPageService PageService
 @inject IBlockService BlockService
 
 <h3>Create Heading</h3>
 
-<EditForm Model="@blockDto" OnSubmit="AddHeading">
+<EditForm Model="@viewModel" OnSubmit="AddHeading">
     <DataAnnotationsValidator/>
 
     <div>
         <label>Page:</label>
-        <InputSelect @bind-Value="blockDto.PageId">
+        <InputSelect @bind-Value="viewModel.Heading.PageId">
+            <option value="0">Choose Page</option>
+
             @foreach (var p in Pages)
             {
                 <option value="@p.Id">@p.Title</option>
@@ -21,23 +24,71 @@
 
     <div>
         <label>Heading:</label>
-        <InputText @bind-Value="blockDto.TextContent"/>
+        <InputText @bind-Value="viewModel.Heading.TextContent"/>
+        <ValidationMessage For="@(() => viewModel.Heading.TextContent)" />
     </div>
 
     <div>
-        <label>Order:</label>
-        <InputNumber @bind-Value="blockDto.Order"/>
+        <label>Font:</label>
+        <InputSelect @bind-Value="viewModel.FontFamily">
+            <option value="">Choose font</option>
+            <option value="font-arial">Arial</option>
+            <option value="font-monaco">Monaco</option>
+            <option value="font-roboto">Roboto</option>
+            <option value="font-times">Times New Roman</option>
+            <option value="font-handwriting">Handwriting</option>
+        </InputSelect>
     </div>
 
     <div>
-        <label>Style:</label>
-
+        <label>Size:</label>
+        <InputSelect @bind-Value="viewModel.FontSize">
+            <option value="">Choose size</option>
+            <option value="fs-1">Extra Large</option>
+            <option value="fs-2">Large</option>
+            <option value="fs-3">Medium</option>
+            <option value="fs-4">Small</option>
+            <option value="fs-5">Extra Small</option>
+        </InputSelect>
     </div>
+
+    <div>
+        <label>Bold:</label>
+            <InputCheckbox @bind-Value="viewModel.IsBold" />
+    </div>
+
+    <div>
+        <label>Italic:</label>
+        <InputCheckbox @bind-Value="viewModel.IsItalic" />
+    </div>
+
+    <div>
+        <label>Alignment:</label>
+        <InputSelect @bind-Value="viewModel.Alignment">
+            <option value="">Choose Alignment</option>
+            <option value="text-start">Left</option>
+            <option value="text-center">Center</option>
+            <option value="text-end">Right</option>
+        </InputSelect>
+    </div>
+
+    <div>
+        <label>Color:</label>
+        <InputSelect @bind-Value="viewModel.TextColor">
+            <option value="">Choose color</option>
+            <option value="text-black">Black</option>
+            <option value="text-dk-grey">Dark Grey</option>
+            <option value="text-grey">Grey</option>
+            <option value="text-li-grey">Li Grey</option>
+
+        </InputSelect>
+    </div>
+
     <button type="submit">Create Heading</button>
 </EditForm>
 
 @code {
-    public BlockDto blockDto { get; set; } = new();
+    public CreateHeadingViewModel viewModel { get; set; } = new();
     public List<PageDto> Pages { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
@@ -51,7 +102,23 @@
 
         if (isValid)
         {
-            
+            string cssClasses = $"{viewModel.FontFamily} "+
+            $"{viewModel.FontSize} "+
+            $"{viewModel.Alignment} "+
+            $"{viewModel.TextColor}";
+
+            if(viewModel.IsBold)
+            {
+                cssClasses += " fw-bold";
+            }
+            if(viewModel.IsItalic)
+            {
+                cssClasses += " fst-italic";
+            }
+
+            viewModel.Heading.CssClass = cssClasses;
+
+            await BlockService.AddHeadingAsync(viewModel.Heading);
         }
     }
 }

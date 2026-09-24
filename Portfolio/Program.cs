@@ -28,6 +28,8 @@ namespace Portfolio
             builder.Services.AddScoped<IPageRepository, PageRepository>();
             builder.Services.AddScoped<IPageService, PageService>();
 
+            builder.Services.AddBlazorBootstrap();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

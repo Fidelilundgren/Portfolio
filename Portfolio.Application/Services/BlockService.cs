@@ -87,6 +87,20 @@ public class BlockService : IBlockService
         await _blockRepository.AddAsync(block);
     }
 
+    public async Task AddHeadingAsync(CreateHeadingDto headingDto)
+    {
+        var block = new Block
+        {
+            Type = BlockType.Heading,
+            PageId = headingDto.PageId,
+            TextContent = headingDto.TextContent,
+            Order = headingDto.Order,
+            CssClass = headingDto.CssClass
+        };
+
+        await _blockRepository.AddAsync(block);
+    }
+
     public async Task UpdateAsync(BlockDto blockDto)
     {
         var block = await _blockRepository.GetByIdAsync(blockDto.Id);

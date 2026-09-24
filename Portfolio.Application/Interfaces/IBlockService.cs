@@ -8,6 +8,7 @@ public interface IBlockService
     Task<BlockDto?> GetByIdAsync(int id);
     Task<List<BlockDto>> GetByPageIdAsync(int pageId);
     Task AddAsync(BlockDto block);
+    Task AddHeadingAsync(CreateHeadingDto headingDto);
     Task UpdateAsync(BlockDto block);
     Task DeleteAsync(int id);
 }
