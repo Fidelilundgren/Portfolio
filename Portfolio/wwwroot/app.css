@@ -36,3 +36,19 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.text-dk-grey {
+    color: #2F4F4F;
+}
+
+.text-grey {
+    color: #778899;
+}
+
+.text-li-grey {
+    color: #D3D3D3;
+}
+
+.text-black {
+    color: black;
+}
