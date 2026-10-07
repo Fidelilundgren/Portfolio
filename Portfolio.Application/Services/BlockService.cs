@@ -122,4 +122,35 @@ public class BlockService : IBlockService
 
     public async Task DeleteAsync(int id)
         => await _blockRepository.DeleteAsync(id);
+
+    public async Task<BlockDto?> GetHeadingByPageIdAsync(int pageId)
+    {
+        var blocks = await GetByPageIdAsync(pageId);
+        return blocks.FirstOrDefault(b => b.Type == BlockType.Heading);
+    }
+
+    public async Task AddTextAsync(CreateTextDto createTextDto)
+    {
+        var block = new Block
+        {
+            Type = BlockType.Text,
+            PageId = createTextDto.PageId,
+            TextContent = createTextDto.TextContent,
+            CssClass = createTextDto.CssClass
+        };
+
+        await _blockRepository.AddAsync(block);
+    }
+
+    
+
+    public async Task<List<BlockDto>> GetTextsByPageIdAsync(int pageId)
+    {
+        var blocks = await GetByPageIdAsync(pageId);
+
+        return blocks
+            .Where(b => b.Type == BlockType.Text)
+            .OrderByDescending(b => b.Id)
+            .ToList();
+    }
 }

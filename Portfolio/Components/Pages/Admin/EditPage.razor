@@ -1,0 +1,106 @@
+﻿@page "/admin/pages/edit/{PageId:int}"
+@using Portfolio.Application.Interfaces
+@using Portfolio.ViewModels
+@inject IPageService PageService
+@inject IBlockService BlockService
+@inject NavigationManager Navigation
+
+<div class="container py-4" style="max-width: 800px;">
+    <h2 class="mb-4">Edit Page</h2>
+
+
+    <EditForm Model="viewModel" OnSubmit="UpdatePage">
+        <DataAnnotationsValidator/>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <label class="form-label">Title:</label>
+                <InputText class="form-control" @bind-Value="viewModel.Title"/>
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.Title)" />
+            </div>
+        </div>
+
+        @if (viewModel.Heading != null)
+        {
+            <div class="card mb-4">
+                <div class="card-header">Heading:</div>
+                <div class="card-body">
+                    <InputText class="form-control mb-3" @bind-Value="viewModel.Heading.TextContent" />
+                    <HeadingFormComponent Model="@viewModel.HeadingStyling" Section="heading" />
+                </div>
+            </div>
+        }
+
+        @if (viewModel.Text != null)
+        {
+            <div class="card mb-4">
+                <div class="card-header">Text:</div>
+                <div class="card-body">
+                    <InputTextArea class="form-control mb-3" @bind-Value="viewModel.Text.TextContent" />
+                    <HeadingFormComponent Model="@viewModel.TextStyling" Section="text" />
+                </div>
+            </div>
+        }
+
+        
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </EditForm>
+</div>
+
+@code {
+
+    [Parameter]
+    public int PageId { get; set; }
+
+    public EditPageViewModel viewModel { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var page = await PageService.GetByIdAsync(PageId);
+
+        if (page != null)
+        {
+            viewModel.Title = page.Title;
+            viewModel.Heading = await BlockService.GetHeadingByPageIdAsync(PageId);
+
+            var texts = await BlockService.GetTextsByPageIdAsync(PageId);
+            viewModel.Text = texts.FirstOrDefault();
+        }
+    }
+
+    public async Task UpdatePage(EditContext editContext)
+    {
+        if (!editContext.Validate())
+        {
+            return;
+        }
+
+        await PageService.UpdateAsync(viewModel.ToPageDto(PageId));
+
+        if (viewModel.Heading != null)
+        {
+            var headingCss = viewModel.HeadingStyling.GetCss();
+            if (!string.IsNullOrWhiteSpace(headingCss))
+            {
+                viewModel.Heading.CssClass = headingCss;
+            }
+
+            await BlockService.UpdateAsync(viewModel.Heading);
+        }
+
+
+        if (viewModel.Text != null)
+        {
+            var textCss = viewModel.TextStyling.GetCss();
+            if (!string.IsNullOrWhiteSpace(textCss))
+            {
+                viewModel.Text.CssClass = textCss;
+            }
+
+            await BlockService.UpdateAsync(viewModel.Text);
+        }
+
+        Navigation.NavigateTo("/admin/pages/view");
+    }
+}

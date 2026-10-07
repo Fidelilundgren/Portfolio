@@ -41,7 +41,7 @@ public class PageService : IPageService
         };
     }
 
-    public async Task AddAsync(PageDto pageDto)
+    public async Task<int> AddAsync(PageDto pageDto)
     {
         var page = new Page
         {
@@ -49,6 +49,8 @@ public class PageService : IPageService
         };
 
         await _pageRepository.AddAsync(page);
+
+        return page.Id;
     }
 
     public async Task UpdateAsync(PageDto pageDto)
