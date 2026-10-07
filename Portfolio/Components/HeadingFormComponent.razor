@@ -1,0 +1,72 @@
+﻿@using Portfolio.ViewModels
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <label class="form-label">Font:</label>
+        <InputSelect class="form-select" @bind-Value="Model.FontFamily">
+            <option value="">Choose font</option>
+            <option value="font-arial">Arial</option>
+            <option value="font-monospace">Monospace</option>
+            <option value="font-roboto">Roboto</option>
+            <option value="font-times">Times New Roman</option>
+            <option value="font-handwriting">Handwriting</option>
+        </InputSelect>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Size:</label>
+        <InputSelect class="form-select" @bind-Value="Model.FontSize">
+            <option value="">Choose size</option>
+            <option value="fs-1">Extra Large</option>
+            <option value="fs-2">Large</option>
+            <option value="fs-3">Medium</option>
+            <option value="fs-4">Small</option>
+            <option value="fs-5">Extra Small</option>
+        </InputSelect>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Alignment:</label>
+        <InputSelect class="form-select" @bind-Value="Model.Alignment">
+            <option value="">Choose Alignment</option>
+            <option value="text-start">Left</option>
+            <option value="text-center">Center</option>
+            <option value="text-end">Right</option>
+        </InputSelect>
+     </div>
+
+        <div class="col-md-6">
+        <label class="form-label">Color:</label>
+        <InputSelect class="form-select" @bind-Value="Model.TextColor">
+            <option value="">Choose color</option>
+            <option value="text-black">Black</option>
+            <option value="text-dk-grey">Dark Grey</option>
+            <option value="text-grey">Grey</option>
+            <option value="text-li-grey">Light Grey</option>
+        </InputSelect>
+    </div>
+
+    <div class="col-12">
+        <div class="form-check form-check-inline">
+            <InputCheckbox class="form-check-input" id="@($"{Section}-bold")" @bind-Value="Model.IsBold" />
+            <label class="form-check-label" for="@($"{Section}-bold")">Bold:</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+            <InputCheckbox class="form-check-input" id="@($"{Section}-italic")" @bind-Value="Model.IsItalic" />
+            <label class="form-check-label" for="@($"{Section}-italic")">Italic:</label>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    [Parameter]
+    public HeadingFormViewModel Model { get; set; } = new();
+
+    [Parameter]
+    public string Section { get; set; } = "";
+}

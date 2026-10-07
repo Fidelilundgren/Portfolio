@@ -1,0 +1,42 @@
+﻿@page "/page/{PageId:int}"
+@using Portfolio.Application.Interfaces
+@using Portfolio.ViewModels
+@inject IPageService PageService
+@inject IBlockService BlockService
+
+<div class="container py-5">
+
+    @if (viewModel.Page == null)
+    {
+        <p>Page not found</p>
+    }
+    else
+    {
+        <PageTitle>@viewModel.Page.Title</PageTitle>
+        @if (viewModel.Heading != null)
+        {
+            <h1 class="@viewModel.Heading.CssClass">@viewModel.Heading.TextContent</h1>
+        }
+
+        foreach (var block in viewModel.Texts)
+        {
+            <p class="@block.CssClass">@block.TextContent</p>
+        }
+    }
+    
+</div>
+
+
+
+@code {
+    [Parameter]
+    public int PageId { get; set; }
+    public DisplayPageViewModel viewModel { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        viewModel.Page = await PageService.GetByIdAsync(PageId);
+        viewModel.Heading = await BlockService.GetHeadingByPageIdAsync(PageId);
+        viewModel.Texts = await BlockService.GetTextsByPageIdAsync(PageId);
+    }
+}

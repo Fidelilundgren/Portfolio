@@ -52,3 +52,23 @@ h1:focus {
 .text-black {
     color: black;
 }
+
+.font-arial {
+    font-family: Arial;
+}
+
+.font-monospace {
+    font-family: monospace;
+}
+
+.font-roboto {
+    font-family: Roboto;
+}
+
+.font-times {
+    font-family: "Times New Roman";
+}
+
+.font-handwriting {
+    font-family: "Brush Script MT", cursive;
+}

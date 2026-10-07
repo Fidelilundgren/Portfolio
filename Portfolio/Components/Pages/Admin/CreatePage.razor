@@ -1,33 +1,67 @@
 ﻿@page "/admin/pages/create"
-@using Portfolio.Application.Dtos
 @using Portfolio.Application.Interfaces
+@using Portfolio.ViewModels
 @inject IPageService PageService
+@inject IBlockService BlockService
+@inject NavigationManager Navigation
 
-<h3>Create Page</h3>
+<div class="container py-4" style="max-width: 800px;">
+    <h2 class="mb-4">Create Page</h2>
 
-<EditForm Model="pageDto" OnSubmit="AddPage">
-    <DataAnnotationsValidator/>
 
-    <div>
-        <label>Title:</label>
-        <InputText @bind-Value="pageDto.Title"/>
-        <ValidationMessage For="@(() => pageDto.Title)" />
-    </div>
+    <EditForm Model="viewModel" OnSubmit="AddPage">
+        <DataAnnotationsValidator/>
 
-    <button type="submit">Create</button>
-</EditForm>
+        <div class="card mb-4">
+            <div class="card-body">
+                <label class="form-label">Page Title:</label>
+                <InputText class="form-control" @bind-Value="viewModel.Title"/>
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.Title)" />
+            </div>
+        </div>
+
+        
+        <div class="card mb-4">
+            <div class="card-header">Heading:</div>
+            <div class="card-body">
+                <InputTextArea class="form-control mb-3" @bind-Value="viewModel.HeadingText" />
+                <ValidationMessage class="text-danger-small" For="@(() => viewModel.HeadingText)" />
+                <HeadingFormComponent Model="@viewModel.HeadingStyling" Section="heading" />
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">Text:</div>
+            <div class="card-body">
+                <InputTextArea class="form-control mb-3" @bind-Value="viewModel.Text" />
+                <HeadingFormComponent Model="viewModel.TextStyling" Section="text" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Page</button>
+    </EditForm>
+</div>
 
 @code {
 
-    public PageDto pageDto { get; set; } = new();
+    public CreatePageViewModel viewModel { get; set; } = new();
 
     public async Task AddPage(EditContext editContext)
     {
-        bool isValid = editContext.Validate();
-
-        if (isValid)
+        if (!editContext.Validate())
         {
-            await PageService.AddAsync(pageDto);
+            return;
         }
+
+        int pageId = await PageService.AddAsync(viewModel.ToPageDto());
+
+        await BlockService.AddHeadingAsync(viewModel.ToHeadingDto(pageId));
+
+        if (!string.IsNullOrWhiteSpace(viewModel.Text))
+        {
+            await BlockService.AddTextAsync(viewModel.ToTextDto(pageId));
+        }
+
+        Navigation.NavigateTo($"/page/{pageId}");
     }
 }
