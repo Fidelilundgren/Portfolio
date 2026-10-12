@@ -1,7 +1,22 @@
 ﻿@page "/"
+@using Portfolio.Application.Interfaces
+@inject IMenuService MenuService
 
-<PageTitle>Home</PageTitle>
+@if (startPageId != null)
+{
+    <DisplayPage PageId="startPageId.Value" />
+}
+else 
+{
+    <div class="container py-5"></div>
+}
 
-<h1>Hello, world!</h1>
+@code {
+    private int? startPageId;
 
-Welcome to your new app.
+    protected override async Task OnInitializedAsync()
+    {
+        var menu = await MenuService.GetAllAsync();
+        startPageId = menu.FirstOrDefault()?.PageId;
+    }
+}

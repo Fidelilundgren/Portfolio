@@ -6,40 +6,56 @@ namespace Portfolio.Infrastructure.Repositories;
 
 public class MenuRepository : IMenuRepository
 {
-    private readonly AppDbContext _context;
-    public MenuRepository(AppDbContext context)
+    private readonly IDbContextFactory<AppDbContext> _factory;
+    public MenuRepository(IDbContextFactory<AppDbContext> factory)
     {
-        _context = context;
+        _factory = factory;
     }
 
-    public async Task<List<Menu>> GetAllAsync() 
-        => await _context.Menus
+    public async Task<List<Menu>> GetAllAsync()
+    {
+        using var context = await _factory.CreateDbContextAsync();
+        
+        return await context.Menus
         .OrderBy(m => m.Order)
         .ToListAsync();
+    }
+
 
     public async Task<Menu?> GetByIdAsync(int id)
-        => await _context.Menus
-        .FindAsync(id);
+    {
+        using var context = await _factory.CreateDbContextAsync();
+
+        return await context
+            .Menus
+            .FindAsync(id);
+    }
 
     public async Task AddAsync(Menu menu)
     {
-        _context.Menus.Add(menu);
-        await _context.SaveChangesAsync();
+        using var context = await _factory.CreateDbContextAsync();
+
+        context.Menus.Add(menu);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Menu menu)
     {
-        _context.Menus.Update(menu);
-        await _context.SaveChangesAsync();
+        using var context = await _factory.CreateDbContextAsync();
+
+        context.Menus.Update(menu);
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
-        var item = await _context.Menus.FindAsync(id);
+        using var context = await _factory.CreateDbContextAsync();
+
+        var item = await context.Menus.FindAsync(id);
         if (item != null)
         {
-            _context.Menus.Remove(item);
-            await _context.SaveChangesAsync();
+            context.Menus.Remove(item);
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -18,8 +18,21 @@
                     <h5 class="card-title mb-1">@p.Title</h5>
                     <small class="text-muted">Visits: @p.VisitCount</small>
                 </div>
-                <a href="@($"/page/{p.Id}")" class="btn btn-outline-primary">View</a>
-                <a href="@($"/admin/pages/edit/{p.Id}")" class="btn btn-outline-secondary">Edit</a>
+
+                <div class="d-flex gap-2">
+                    @if (viewModel.PageIdToDelete == p.Id)
+                    {
+                        <span class="align-self-center">Delete this page?</span>
+                        <button class="btn btn-danger" @onclick="() => DeletePage(p.Id)">Delete</button>
+                        <button class="btn btn-outline-secondary" @onclick="() => viewModel.PageIdToDelete = null">Cancel</button>
+                    }
+                    else
+                    {
+                    <a href="@($"/page/{p.Id}")" class="btn btn-outline-primary">View</a>
+                    <a href="@($"/admin/pages/edit/{p.Id}")" class="btn btn-outline-secondary">Edit</a>
+                    <button class="btn btn-outline-danger" @onclick="() => viewModel.PageIdToDelete = p.Id">Delete</button>
+                    }
+                </div>
             </div>
         </div>
     }
@@ -30,5 +43,12 @@
     protected override async Task OnInitializedAsync()
     {
         viewModel.Pages = await PageService.GetAllAsync();
+    }
+
+    private async Task DeletePage(int id)
+    {
+        await PageService.DeleteAsync(id);
+        viewModel.Pages.RemoveAll(p => p.Id == id);
+        viewModel.PageIdToDelete = null;
     }
 }
