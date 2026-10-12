@@ -1,12 +1,13 @@
-﻿using Portfolio.Domain.Models;
+﻿using Portfolio.Application.Dtos;
+using Portfolio.Domain.Models;
 
 namespace Portfolio.Application.Interfaces;
 
 public interface IMenuService
 {
-    Task<List<Menu>> GetAllAsync();
-    Task<Menu?> GetByIdAsync(int id);
-    Task AddAsync(Menu menu);
-    Task UpdateAsync(Menu menu);
+    Task<List<MenuDto>> GetAllAsync();
+    Task AddAsync(MenuDto menuDto);
+    Task UpdateAsync(MenuDto menuDto);
     Task DeleteAsync(int id);
+    Task MoveAsync(int id, int direction);
 }

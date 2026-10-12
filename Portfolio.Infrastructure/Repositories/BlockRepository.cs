@@ -5,47 +5,63 @@ namespace Portfolio.Infrastructure.Repositories;
 
 public class BlockRepository : IBlockRepository
 {
-    private readonly AppDbContext _context;
-    public BlockRepository(AppDbContext appDbContext)
+    private readonly IDbContextFactory<AppDbContext> _factory;
+
+    public BlockRepository(IDbContextFactory<AppDbContext> factory)
     {
-        _context = appDbContext;
+        _factory = factory;
     }
 
     public async Task<List<Block>> GetAllAsync()
-        => await _context.Blocks
-        .OrderBy(b => b.Order)
-        .ToListAsync();
+    {
+        using var context = await _factory.CreateDbContextAsync();
 
+        return await context
+            .Blocks
+            .OrderBy(b => b.Order).ToListAsync();
+    }
     public async Task<Block?> GetByIdAsync(int id)
-        => await _context.Blocks
-        .FindAsync(id);
+    {
+        using var context = await _factory.CreateDbContextAsync();
+
+        return await context.Blocks.FindAsync(id);
+    }
 
     public async Task<List<Block>> GetByPageIdAsync(int pageId)
-        => await _context.Blocks
+    {
+        using var context = await _factory.CreateDbContextAsync();
+
+        return await context.Blocks
         .Where(b => b.PageId == pageId)
         .OrderBy(b => b.Order)
         .ToListAsync();
+    }
 
     public async Task AddAsync(Block block)
     {
-        _context.Blocks.Add(block);
-        await _context.SaveChangesAsync();
+        using var context = await _factory.CreateDbContextAsync();
+
+        context.Blocks.Add(block);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Block block)
     {
-        _context.Blocks.Update(block);
-        await _context.SaveChangesAsync();
+        using var context = await _factory.CreateDbContextAsync();
+
+        context.Blocks.Update(block);
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
-        var item = await _context.Blocks.FindAsync(id);
+        using var context = await _factory.CreateDbContextAsync();
+        var item = await context.Blocks.FindAsync(id);
 
         if (item != null)
         {
-            _context.Blocks.Remove(item);
-            await _context.SaveChangesAsync();
+            context.Blocks.Remove(item);
+            await context.SaveChangesAsync();
         }
     }
 }

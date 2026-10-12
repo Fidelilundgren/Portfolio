@@ -6,40 +6,51 @@ namespace Portfolio.Infrastructure.Repositories;
 
 public class PageRepository : IPageRepository
 {
-    private readonly AppDbContext _context;
-    public PageRepository(AppDbContext appDbContext)
+    private readonly IDbContextFactory<AppDbContext> _factory;
+
+    public PageRepository(IDbContextFactory<AppDbContext> factory)
     {
-        _context = appDbContext;
+        _factory = factory;
+    }
+    public async Task<List<Page>> GetAllAsync()
+    {
+        using var context = await _factory.CreateDbContextAsync();
+
+        return await context.Pages.OrderBy(p => p.Id).ToListAsync();
     }
 
-    public async Task<List<Page>> GetAllAsync()
-        => await _context.Pages
-        .ToListAsync();
-
     public async Task<Page?> GetByIdAsync(int id)
-        => await _context.Pages
-        .SingleOrDefaultAsync(p => p.Id == id);
+    {
+        using var context = await _factory.CreateDbContextAsync();
+
+        return await context.Pages.SingleOrDefaultAsync(p => p.Id == id);
+    }
 
     public async Task AddAsync(Page page)
     {
-        _context.Pages.Add(page);
-        await _context.SaveChangesAsync();
+        using var context = await _factory.CreateDbContextAsync();
+
+        context.Pages.Add(page);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Page page)
     {
-        _context.Pages.Update(page);
-        await _context.SaveChangesAsync();
+        using var context = await _factory.CreateDbContextAsync();
+
+        context.Pages.Update(page);
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
-        var item = await _context.Pages.FindAsync(id);
+        using var context = await _factory.CreateDbContextAsync();
+        var item = await context.Pages.FindAsync(id);
 
         if (item != null)
         {
-            _context.Pages.Remove(item);
-            await _context.SaveChangesAsync();
+            context.Pages.Remove(item);
+            await context.SaveChangesAsync();
         }
     }
 }
