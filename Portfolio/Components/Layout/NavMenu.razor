@@ -1,6 +1,7 @@
 ﻿@using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
 @inject IMenuService MenuService
+@inject NavigationManager NavigationManager
 
 <nav class="navbar navbar-expand-md navbar-light bg light border-bottom mb-4">
     <div class="container">
@@ -39,4 +40,23 @@
         viewModel.MenuItems = await MenuService.GetAllAsync();
     }
                 }
-                
+                @code {
+    private string? currentUrl;
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+}

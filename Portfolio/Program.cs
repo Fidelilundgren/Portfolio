@@ -2,7 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio.Application.Interfaces;
 using Portfolio.Application.Services;
 using Portfolio.Components;
+using Portfolio.Infrastructure.Data;
 using Portfolio.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Portfolio.Components.Account;
+using Portfolio.Domain.Models;
 
 namespace Portfolio
 {
@@ -30,6 +35,30 @@ namespace Portfolio
 
             builder.Services.AddBlazorBootstrap();
 
+            builder.Services.AddCascadingAuthenticationState();
+
+            builder.Services.AddScoped<IdentityRedirectManager>();
+
+            builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+            builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
+            builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+    })
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+            builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -48,6 +77,8 @@ namespace Portfolio
             app.MapStaticAssets();
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
+
+            app.MapAdditionalIdentityEndpoints();;
 
             app.Run();
         }
