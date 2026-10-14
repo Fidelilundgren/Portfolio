@@ -1,4 +1,7 @@
 ﻿@page "/admin/pages/create"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
 @inject IPageService PageService

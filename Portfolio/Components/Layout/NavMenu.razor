@@ -3,7 +3,7 @@
 @inject IMenuService MenuService
 @inject NavigationManager NavigationManager
 
-<nav class="navbar navbar-expand-md navbar-light bg light border-bottom mb-4">
+<nav class="navbar navbar-expand-md navbar-light bg-light border-bottom mb-4">
     <div class="container">
         <a class="navbar-brand" href="/">Portfolio</a>
 
@@ -21,27 +21,39 @@
                 }
             </ul>
 
+            <!-- Admin -->
             <ul class="navbar-nav">
-                <li class="nav-item"><NavLink class="nav-link" href="/admin/pages/view">Pages</NavLink></li>
-                <li class="nav-item"><NavLink class="nav-link" href="/admin/menu">Menu</NavLink></li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item"><NavLink class="nav-link" href="/admin/pages/view">Pages</NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="/admin/menu">Menu</NavLink></li>
+                        <li class="nav-item">
+                            <form action="Account/Logout" method="post">
+                                <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                            <button type="submit" class="nav-link btn btn-link">Logout</button>
+                            </form>
+                        </li>
+                    </Authorized>
+                    <NotAuthorized>
+                        <li class="nav-item"><NavLink class="nav-link" href="Account/Login">Login</NavLink></li>
+                    </NotAuthorized>
+                </AuthorizeView>
             </ul>
         </div>
-    
     </div>
-
-
 </nav>
 
 
 @code{
     private SiteMenuViewModel viewModel = new();
+    private string? currentUrl;
+
     protected override async Task OnInitializedAsync()
     {
         viewModel.MenuItems = await MenuService.GetAllAsync();
     }
-                }
-                @code {
-    private string? currentUrl;
+    
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
