@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portfolio.Application.Interfaces;
 using Portfolio.Domain.Models;
+using Portfolio.Infrastructure.Data;
 namespace Portfolio.Infrastructure.Repositories;
 
 public class BlockRepository : IBlockRepository

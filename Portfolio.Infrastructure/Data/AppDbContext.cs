@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portfolio.Domain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-public class AppDbContext : DbContext
+namespace Portfolio.Infrastructure.Data;
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
