@@ -37,27 +37,12 @@ h1:focus {
     text-align: start;
 }
 
-.text-dk-grey {
-    color: #2F4F4F;
-}
-
-.text-grey {
-    color: #778899;
-}
-
-.text-li-grey {
-    color: #D3D3D3;
-}
-
-.text-black {
-    color: black;
-}
-
+/* Fonts */
 .font-arial {
     font-family: Arial;
 }
 
-.font-monospace {
+.font-mono {
     font-family: monospace;
 }
 
@@ -70,5 +55,64 @@ h1:focus {
 }
 
 .font-handwriting {
-    font-family: "Brush Script MT", cursive;
+    font-family: "Caveat", cursive;
 }
+
+/* Sizes */
+.size-xl {
+    font-size: 2.5rem;
+}
+
+.size-l {
+    font-size: 2rem;
+}
+
+.size-m {
+    font-size: 1.5rem;
+}
+
+.size-s {
+    font-size: 1.25rem;
+}
+
+.size-xs {
+    font-size: 1rem;
+}
+
+/* Justify */
+.align-left {
+    text-align: left;
+}
+.align-center {
+    text-align: center;
+}
+.align-right {
+    text-align: right;
+}
+
+/* Color */
+.text-black {
+    color: #000000;
+}
+
+.text-dk-grey {
+    color: #2F4F4F;
+}
+
+.text-grey {
+    color: #778899;
+}
+
+.text-li-grey {
+    color: #A9A9A9;
+}
+
+/* Bold/ cursive */
+.bold {
+    font-weight: 700;
+}
+.italic {
+    font-style: italic;
+}
+
+

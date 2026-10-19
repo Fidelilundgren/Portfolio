@@ -15,13 +15,25 @@ public class HeadingFormViewModel
 
         if (IsBold)
         {
-            classes.Add("fw-bold");
+            classes.Add("bold");
         }
         if (IsItalic)
         {
-            classes.Add("fst-italic");
+            classes.Add("italic");
         }
 
         return string.Join(" ", classes.Where(c => !string.IsNullOrWhiteSpace(c)));
+    }
+
+    public void LoadFromCss(string? css)
+    {
+        var classes = (css ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        FontFamily = classes.FirstOrDefault(c => c.StartsWith("font-"));
+        FontSize = classes.FirstOrDefault(c => c.StartsWith("size-"));
+        Alignment = classes.FirstOrDefault(c => c.StartsWith("align-"));
+        TextColor = classes.FirstOrDefault(c => c.StartsWith("color-"));
+        IsBold = classes.Contains("bold");
+        IsItalic = classes.Contains("italic");
     }
 }
