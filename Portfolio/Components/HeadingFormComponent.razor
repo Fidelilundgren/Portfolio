@@ -6,7 +6,7 @@
         <InputSelect class="form-select" @bind-Value="Model.FontFamily">
             <option value="">Choose font</option>
             <option value="font-arial">Arial</option>
-            <option value="font-monospace">Monospace</option>
+            <option value="font-mono">Monospace</option>
             <option value="font-roboto">Roboto</option>
             <option value="font-times">Times New Roman</option>
             <option value="font-handwriting">Handwriting</option>
@@ -17,11 +17,11 @@
         <label class="form-label">Size:</label>
         <InputSelect class="form-select" @bind-Value="Model.FontSize">
             <option value="">Choose size</option>
-            <option value="fs-1">Extra Large</option>
-            <option value="fs-2">Large</option>
-            <option value="fs-3">Medium</option>
-            <option value="fs-4">Small</option>
-            <option value="fs-5">Extra Small</option>
+            <option value="size-xl">Extra Large</option>
+            <option value="size-l">Large</option>
+            <option value="size-m">Medium</option>
+            <option value="size-s">Small</option>
+            <option value="size-xs">Extra Small</option>
         </InputSelect>
     </div>
 
@@ -29,9 +29,9 @@
         <label class="form-label">Alignment:</label>
         <InputSelect class="form-select" @bind-Value="Model.Alignment">
             <option value="">Choose Alignment</option>
-            <option value="text-start">Left</option>
-            <option value="text-center">Center</option>
-            <option value="text-end">Right</option>
+            <option value="align-left">Left</option>
+            <option value="align-center">Center</option>
+            <option value="align-right">Right</option>
         </InputSelect>
      </div>
 
@@ -39,10 +39,10 @@
         <label class="form-label">Color:</label>
         <InputSelect class="form-select" @bind-Value="Model.TextColor">
             <option value="">Choose color</option>
-            <option value="text-black">Black</option>
-            <option value="text-dk-grey">Dark Grey</option>
-            <option value="text-grey">Grey</option>
-            <option value="text-li-grey">Light Grey</option>
+            <option value="color-black">Black</option>
+            <option value="color-dk-grey">Dark Grey</option>
+            <option value="color-grey">Grey</option>
+            <option value="color-li-grey">Light Grey</option>
         </InputSelect>
     </div>
 

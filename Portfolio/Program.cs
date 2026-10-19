@@ -50,7 +50,7 @@ namespace Portfolio
 
             builder.Services.AddIdentityCore<ApplicationUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = true;
+        options.SignIn.RequireConfirmedAccount = false; // Jag sätter till false för har inget bekräftelsemail
         options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
     })
     .AddEntityFrameworkStores<AppDbContext>()

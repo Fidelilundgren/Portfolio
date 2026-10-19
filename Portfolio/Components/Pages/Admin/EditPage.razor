@@ -1,9 +1,11 @@
 ﻿@page "/admin/pages/edit/{PageId:int}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
+
 @inject IPageService PageService
 @inject IBlockService BlockService
 @inject NavigationManager Navigation
@@ -28,24 +30,21 @@
             <div class="card mb-4">
                 <div class="card-header">Heading:</div>
                 <div class="card-body">
-                    <InputText class="form-control mb-3" @bind-Value="viewModel.Heading.TextContent" />
+                    <InputText class="form-control mb-3" @bind-Value="viewModel.HeadingText" />
+                    <ValidationMessage class="text-danger small" For="@(() => viewModel.HeadingText)" />
                     <HeadingFormComponent Model="@viewModel.HeadingStyling" Section="heading" />
                 </div>
             </div>
         }
 
-        @if (viewModel.Text != null)
-        {
-            <div class="card mb-4">
-                <div class="card-header">Text:</div>
-                <div class="card-body">
-                    <InputTextArea class="form-control mb-3" @bind-Value="viewModel.Text.TextContent" />
-                    <HeadingFormComponent Model="@viewModel.TextStyling" Section="text" />
-                </div>
+        <div class="card mb-4">
+            <div class="card-header">Text:</div>
+            <div class="card-body">
+                <InputTextArea class="form-control mb-3" @bind-Value="viewModel.TextContent" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.TextContent)" />
+                <HeadingFormComponent Model="@viewModel.TextStyling" Section="text" />
             </div>
-        }
-
-        
+        </div>
 
         <button type="submit" class="btn btn-primary">Update</button>
     </EditForm>
@@ -67,8 +66,21 @@
             viewModel.Title = page.Title;
             viewModel.Heading = await BlockService.GetHeadingByPageIdAsync(PageId);
 
+
+            if (viewModel.Heading != null)
+            {
+                viewModel.HeadingText = viewModel.Heading.TextContent ?? string.Empty;
+                viewModel.HeadingStyling.LoadFromCss(viewModel.Heading.CssClass);
+            }
+
             var texts = await BlockService.GetTextsByPageIdAsync(PageId);
             viewModel.Text = texts.FirstOrDefault();
+
+            if (viewModel.Text != null)
+            {
+                viewModel.TextContent = viewModel.Text.TextContent;
+                viewModel.TextStyling.LoadFromCss(viewModel.Text.CssClass);
+            }
         }
     }
 
@@ -83,25 +95,22 @@
 
         if (viewModel.Heading != null)
         {
-            var headingCss = viewModel.HeadingStyling.GetCss();
-            if (!string.IsNullOrWhiteSpace(headingCss))
-            {
-                viewModel.Heading.CssClass = headingCss;
-            }
+            viewModel.Heading.TextContent = viewModel.HeadingText;
+            viewModel.Heading.CssClass = viewModel.HeadingStyling.GetCss();
 
             await BlockService.UpdateAsync(viewModel.Heading);
         }
 
-
         if (viewModel.Text != null)
         {
-            var textCss = viewModel.TextStyling.GetCss();
-            if (!string.IsNullOrWhiteSpace(textCss))
-            {
-                viewModel.Text.CssClass = textCss;
-            }
+            viewModel.Text.TextContent = viewModel.TextContent;
+            viewModel.Text.CssClass = viewModel.TextStyling.GetCss();
 
             await BlockService.UpdateAsync(viewModel.Text);
+        }
+        else if (!string.IsNullOrWhiteSpace(viewModel.TextContent))
+        {
+            await BlockService.AddTextAsync(viewModel.ToTextDto(PageId));
         }
 
         Navigation.NavigateTo("/admin/pages/view");

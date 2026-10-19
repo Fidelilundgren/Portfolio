@@ -28,7 +28,7 @@
             <div class="card-header">Heading:</div>
             <div class="card-body">
                 <InputTextArea class="form-control mb-3" @bind-Value="viewModel.HeadingText" />
-                <ValidationMessage class="text-danger-small" For="@(() => viewModel.HeadingText)" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.HeadingText)" />
                 <HeadingFormComponent Model="@viewModel.HeadingStyling" Section="heading" />
             </div>
         </div>
@@ -37,6 +37,7 @@
             <div class="card-header">Text:</div>
             <div class="card-body">
                 <InputTextArea class="form-control mb-3" @bind-Value="viewModel.Text" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.Text)"/>
                 <HeadingFormComponent Model="viewModel.TextStyling" Section="text" />
             </div>
         </div>
