@@ -9,4 +9,5 @@ public interface IPageService
     Task<int> AddAsync(PageDto dto);
     Task UpdateAsync(PageDto page);
     Task DeleteAsync(int id);
+    Task VisitCountAsync(int id);
 }

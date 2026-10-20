@@ -9,4 +9,5 @@ public interface IPageRepository
     Task AddAsync(Page page);
     Task UpdateAsync(Page page);
     Task DeleteAsync(int id);
+    Task VisitCountAsync(int id);
 }

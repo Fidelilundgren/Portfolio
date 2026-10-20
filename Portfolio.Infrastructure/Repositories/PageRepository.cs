@@ -54,4 +54,16 @@ public class PageRepository : IPageRepository
             await context.SaveChangesAsync();
         }
     }
+
+    public async Task VisitCountAsync(int id)
+    {
+        using var context = await _factory.CreateDbContextAsync();
+        var page = await context.Pages.FindAsync(id);
+
+        if (page != null)
+        {
+            page.VisitCount++;
+            await context.SaveChangesAsync();
+        }
+    }
 }
