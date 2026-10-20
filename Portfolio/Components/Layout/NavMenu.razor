@@ -1,8 +1,9 @@
 ﻿@implements IDisposable
-@using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
-@inject IMenuService MenuService
+@using Portfolio.Application.Dtos
+
 @inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
 
 <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom mb-4">
     <div class="container">
@@ -52,7 +53,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        viewModel.MenuItems = await MenuService.GetAllAsync();
+        var client = HttpClientFactory.CreateClient("MenuApi");
+        viewModel.MenuItems = await client.GetFromJsonAsync<List<MenuDto>>("api/menu") ?? [];
     }
     
     protected override void OnInitialized()

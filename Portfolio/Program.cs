@@ -21,6 +21,13 @@ namespace Portfolio
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            builder.Services.AddControllers();
+
+            builder.Services.AddHttpClient("MenuApi", client => 
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
+            });
+
             builder.Services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -79,10 +86,13 @@ namespace Portfolio
             app.UseAntiforgery();
 
             app.MapStaticAssets();
+
+            app.MapControllers();
+
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
 
-            app.MapAdditionalIdentityEndpoints();;
+            app.MapAdditionalIdentityEndpoints();
 
             app.Run();
         }
