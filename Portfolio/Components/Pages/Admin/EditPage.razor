@@ -9,6 +9,7 @@
 @inject IPageService PageService
 @inject IBlockService BlockService
 @inject NavigationManager Navigation
+@inject IImageService ImageService
 
 <div class="container py-4" style="max-width: 800px;">
     <h2 class="mb-4">Edit Page</h2>
@@ -46,6 +47,39 @@
             </div>
         </div>
 
+         <div class="card mb-4">
+            <div class="card-header">Image:</div>
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(viewModel.ImageUrl))
+                {
+                    <img src="@viewModel.ImageUrl" class="img-fluid mb-3" style="max-height: 150px;" alt="" />
+                    <p class="small text-muted">Choose a new file:</p>
+                }
+                <InputFile class="form-control" OnChange="HandleImageUpload" accept=".jpg, .jpeg, .png, .webp, .gif" />
+                <ImageFormComponent Model="viewModel.ImageStyling" />
+
+                @if (viewModel.ImageError != null)
+                {
+                    <div class="text-danger small">@viewModel.ImageError</div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Link:</div>
+            <div class="card-body">
+                <label class="form-label">URL:</label>
+                <InputText class="form-control mb-2" @bind-Value="viewModel.LinkUrl" placeholder="https://" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.LinkUrl)" />
+
+                <label class="form-label">Link text:</label>
+                <InputText class="form-control mb-3" @bind-Value="viewModel.LinkText" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.LinkText)" />
+
+                <HeadingFormComponent Model="viewModel.LinkStyling" Section="link" />
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Update</button>
     </EditForm>
 </div>
@@ -66,7 +100,6 @@
             viewModel.Title = page.Title;
             viewModel.Heading = await BlockService.GetHeadingByPageIdAsync(PageId);
 
-
             if (viewModel.Heading != null)
             {
                 viewModel.HeadingText = viewModel.Heading.TextContent ?? string.Empty;
@@ -81,8 +114,27 @@
                 viewModel.TextContent = viewModel.Text.TextContent;
                 viewModel.TextStyling.LoadFromCss(viewModel.Text.CssClass);
             }
+
+            viewModel.Image = await BlockService.GetImageByPageIdAsync(PageId);
+
+            if (viewModel.Image != null)
+            {
+                viewModel.ImageUrl = viewModel.Image.ImageUrl;
+                viewModel.ImageStyling.LoadFromCss(viewModel.Image.CssClass);
+            }
+
+            viewModel.Link = await BlockService.GetLinkByPageIdAsync(PageId);
+
+            if (viewModel.Link != null)
+            {
+                viewModel.LinkUrl = viewModel.Link.LinkUrl;
+                viewModel.LinkText = viewModel.Link.LinkText;
+                viewModel.LinkStyling.LoadFromCss(viewModel.Link.CssClass);
+            }
         }
     }
+
+
 
     public async Task UpdatePage(EditContext editContext)
     {
@@ -113,6 +165,57 @@
             await BlockService.AddTextAsync(viewModel.ToTextDto(PageId));
         }
 
+        string? newImageUrl = null;
+
+        if (viewModel.UploadedImage != null)
+        {
+            await using var stream = viewModel.UploadedImage.OpenReadStream(ImageService.MaxFileSize);
+            newImageUrl = await ImageService.SaveAsync(stream, viewModel.UploadedImage.Name);
+        }
+
+        if (viewModel.Image != null)
+        {
+            if (newImageUrl != null)
+            {
+                viewModel.Image.ImageUrl = newImageUrl;
+            }
+
+            viewModel.Image.CssClass = viewModel.ImageStyling.GetCss();
+            await BlockService.UpdateAsync(viewModel.Image);
+        }
+        else if (newImageUrl != null)
+        {
+            await BlockService.AddImageAsync(viewModel.ToImageDto(PageId, newImageUrl));
+        }
+        
+
+        if (viewModel.Link != null)
+        {
+            viewModel.Link.LinkUrl = viewModel.LinkUrl;
+            viewModel.Link.LinkText = viewModel.LinkText;
+            viewModel.Link.CssClass = viewModel.LinkStyling.GetCss();
+
+            await BlockService.UpdateAsync(viewModel.Link);
+        }
+        else if (!string.IsNullOrWhiteSpace(viewModel.LinkUrl))
+        {
+            await BlockService.AddLinkAsync(viewModel.ToLinkDto(PageId));
+        }
+
         Navigation.NavigateTo("/admin/pages/view");
+    }
+
+    private void HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        viewModel.ImageError = ImageService.Validate(e.File.Name, e.File.Size);
+
+        if (viewModel.ImageError == null)
+        {
+            viewModel.UploadedImage = e.File;
+        }
+        else
+        {
+            viewModel.UploadedImage = null;
+        }
     }
 }

@@ -33,6 +33,9 @@ namespace Portfolio
             builder.Services.AddScoped<IPageRepository, PageRepository>();
             builder.Services.AddScoped<IPageService, PageService>();
 
+            builder.Services.AddScoped<IImageRepository>(_ => new ImageRepository(builder.Environment.WebRootPath));
+            builder.Services.AddScoped<IImageService, ImageService>();
+
             builder.Services.AddBlazorBootstrap();
 
             builder.Services.AddCascadingAuthenticationState();
@@ -71,6 +74,7 @@ namespace Portfolio
 
             app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseAntiforgery();
 

@@ -142,8 +142,6 @@ public class BlockService : IBlockService
         await _blockRepository.AddAsync(block);
     }
 
-    
-
     public async Task<List<BlockDto>> GetTextsByPageIdAsync(int pageId)
     {
         var blocks = await GetByPageIdAsync(pageId);
@@ -152,5 +150,44 @@ public class BlockService : IBlockService
             .Where(b => b.Type == BlockType.Text)
             .OrderByDescending(b => b.Id)
             .ToList();
+    }
+
+    public async Task AddImageAsync(CreateImageDto createImageDto)
+    {
+        var block = new Block
+        {
+            Type = BlockType.Image,
+            PageId = createImageDto.PageId,
+            ImageUrl = createImageDto.ImageUrl,
+            CssClass = createImageDto.CssClass
+        };
+
+        await _blockRepository.AddAsync(block);
+    }
+
+    public async Task<BlockDto?> GetImageByPageIdAsync(int pageId)
+    {
+        var blocks = await GetByPageIdAsync(pageId);
+        return blocks.FirstOrDefault(b => b.Type == BlockType.Image);
+    }
+
+    public async Task AddLinkAsync(CreateLinkDto createLinkDto)
+    {
+        var block = new Block
+        {
+            Type = BlockType.Link,
+            PageId = createLinkDto.PageId,
+            LinkUrl = createLinkDto.LinkUrl,
+            LinkText = createLinkDto.LinkText,
+            CssClass = createLinkDto.CssClass
+        };
+
+        await _blockRepository.AddAsync(block);
+    }
+
+    public async Task<BlockDto?> GetLinkByPageIdAsync(int pageId)
+    {
+        var blocks = await GetByPageIdAsync(pageId);
+        return blocks.FirstOrDefault(b => b.Type == BlockType.Link);
     }
 }

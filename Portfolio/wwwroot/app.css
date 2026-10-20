@@ -91,19 +91,19 @@ h1:focus {
 }
 
 /* Color */
-.text-black {
+.color-black {
     color: #000000;
 }
 
-.text-dk-grey {
+.color-dk-grey {
     color: #2F4F4F;
 }
 
-.text-grey {
+.color-grey {
     color: #778899;
 }
 
-.text-li-grey {
+.color-li-grey {
     color: #A9A9A9;
 }
 
@@ -113,6 +113,53 @@ h1:focus {
 }
 .italic {
     font-style: italic;
+}
+
+/* Image size*/
+.img-size-s 
+{ width: 25%; 
+
+}
+.img-size-m {
+    width: 50%; 
+
+}
+.img-size-l { 
+    width: 75%; 
+
+}
+.img-size-full { 
+    width: 100%; 
+
+}
+
+/* Img placement*/
+.img-place-left {
+    margin-right: auto;
+}
+.img-place-center {
+    margin-left: auto; margin-right: auto;
+}
+.img-place-right {
+    margin-left: auto;
+}
+
+/* Img shape*/
+.img-shape-rounded {
+    border-radius: 1rem;
+}
+.img-shape-circle {
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+/* Mobile small images get full width*/
+@media (max-width: 550px) {
+    .img-size-s,
+    .img-size-m,
+    .img-size-l
+    { width: 100%; }
 }
 
 

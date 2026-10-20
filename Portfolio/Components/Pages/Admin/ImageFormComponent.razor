@@ -1,0 +1,38 @@
+﻿@using Portfolio.ViewModels
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <label class="form-label">Size:</label>
+        <InputSelect class="form-select" @bind-Value="Model.Size">
+            <option value="">Original size</option>
+            <option value="img-size-s">Small</option>
+            <option value="img-size-m">Medium</option>
+            <option value="img-size-l">Large</option>
+            <option value="img-size-full">Full width</option>
+        </InputSelect>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Placement:</label>
+        <InputSelect class="form-select" @bind-Value="Model.Placement">
+            <option value="">Choose placement</option>
+            <option value="img-place-left">Left</option>
+            <option value="img-place-center">Center</option>
+            <option value="img-place-right">Right</option>
+        </InputSelect>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Shape:</label>
+        <InputSelect class="form-select" @bind-Value="Model.Shape">
+            <option value="">Square corners</option>
+            <option value="img-shape-rounded">Rounded corners</option>
+            <option value="img-shape-circle">Circle</option>
+        </InputSelect>
+    </div>
+ </div>
+
+@code {
+    [Parameter]
+    public ImageFormViewModel Model { get; set; } = new();
+}

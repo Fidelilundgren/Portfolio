@@ -1,12 +1,15 @@
 ﻿@page "/admin/pages/create"
 @rendermode InteractiveServer
 @attribute [Authorize]
+
 @using Microsoft.AspNetCore.Authorization
 @using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
+
 @inject IPageService PageService
 @inject IBlockService BlockService
 @inject NavigationManager Navigation
+@inject IImageService ImageService
 
 <div class="container py-4" style="max-width: 800px;">
     <h2 class="mb-4">Create Page</h2>
@@ -42,6 +45,33 @@
             </div>
         </div>
 
+        <div class="card mb-4">
+            <div class="card-header">Image:</div>
+            <div class="card-body">
+                <InputFile class="form-control" OnChange="HandleImageUpload" accept=".jpg, .jpeg, .png, .webp, .gif" />
+                <ImageFormComponent Model="viewModel.ImageStyling" />
+                @if (viewModel.ImageError != null)
+                {
+                    <div class="text-danger small">@viewModel.ImageError</div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Link:</div>
+            <div class="card-body">
+                <label class="form-label">URL:</label>
+                <InputText class="form-control mb-2" @bind-Value="viewModel.LinkUrl" placeholder="https://" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.LinkUrl)"/>
+
+                <label class="form-label">Link text:</label>
+                <InputText class="form-control mb-3" @bind-Value="viewModel.LinkText" />
+                <ValidationMessage class="text-danger small" For="@(() => viewModel.LinkText)" />
+
+                <HeadingFormComponent Model="viewModel.LinkStyling" Section="link" />
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Create Page</button>
     </EditForm>
 </div>
@@ -66,6 +96,34 @@
             await BlockService.AddTextAsync(viewModel.ToTextDto(pageId));
         }
 
+        if (viewModel.UploadedImage != null)
+        {
+            await using var stream = viewModel.UploadedImage.OpenReadStream(ImageService.MaxFileSize);
+
+            var imageUrl = await ImageService.SaveAsync(stream, viewModel.UploadedImage.Name);
+
+            await BlockService.AddImageAsync(viewModel.ToImageDto(pageId, imageUrl));
+        }
+
+        if (!string.IsNullOrWhiteSpace(viewModel.LinkUrl))
+        {
+            await BlockService.AddLinkAsync(viewModel.ToLinkDto(pageId));
+        }
+
         Navigation.NavigateTo($"/page/{pageId}");
+    }
+
+    private void HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        viewModel.ImageError = ImageService.Validate(e.File.Name, e.File.Size);
+
+        if (viewModel.ImageError == null)
+        {
+            viewModel.UploadedImage = e.File;
+        }
+        else
+        {
+            viewModel.UploadedImage = null;
+        }
     }
 }

@@ -7,4 +7,6 @@ public class DisplayPageViewModel
     public PageDto? Page { get; set; }
     public BlockDto? Heading { get; set; }
     public List<BlockDto> Texts { get; set; } = []; 
+    public BlockDto? Image { get; set; }
+    public BlockDto? Link { get; set; }
 }
