@@ -29,7 +29,8 @@ namespace Portfolio
             });
 
             builder.Services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection")));
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
             builder.Services.AddScoped<IMenuRepository, MenuRepository>();
             builder.Services.AddScoped<IMenuService, MenuService>();
