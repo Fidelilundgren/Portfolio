@@ -66,4 +66,7 @@ public class PageService : IPageService
 
     public async Task DeleteAsync(int id)
         => await _pageRepository.DeleteAsync(id);
+
+    public async Task VisitCountAsync(int id)
+        => await _pageRepository.VisitCountAsync(id);
 }

@@ -43,7 +43,19 @@
 @code {
     [Parameter]
     public int PageId { get; set; }
+
     public DisplayPageViewModel viewModel { get; set; } = new();
+
+    private int lastCountedPageId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (PageId != lastCountedPageId)
+        {
+            lastCountedPageId = PageId;
+            await PageService.VisitCountAsync(PageId);
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
