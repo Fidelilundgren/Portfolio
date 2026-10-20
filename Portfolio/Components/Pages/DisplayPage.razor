@@ -23,6 +23,17 @@
         {
             <p class="@block.CssClass">@block.TextContent</p>
         }
+
+        @if (!string.IsNullOrWhiteSpace(viewModel.Image?.ImageUrl))
+        {
+            <img src="@viewModel.Image.ImageUrl" class="img-fluid d-block mb-4 @viewModel.Image.CssClass" alt="" />
+        }
+
+        @if (viewModel.Link != null)
+        {
+            <a href="@viewModel.Link.LinkUrl" class="d-block mb-4 @viewModel.Link.CssClass"
+            target="_blank" rel="noopener noreferrer">@viewModel.Link.LinkText</a>
+        }
     }
     
 </div>
@@ -39,5 +50,7 @@
         viewModel.Page = await PageService.GetByIdAsync(PageId);
         viewModel.Heading = await BlockService.GetHeadingByPageIdAsync(PageId);
         viewModel.Texts = await BlockService.GetTextsByPageIdAsync(PageId);
+        viewModel.Image = await BlockService.GetImageByPageIdAsync(PageId);
+        viewModel.Link = await BlockService.GetLinkByPageIdAsync(PageId);
     }
 }

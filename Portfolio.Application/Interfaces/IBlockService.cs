@@ -14,4 +14,8 @@ public interface IBlockService
     Task<BlockDto?> GetHeadingByPageIdAsync(int pageId);
     Task AddTextAsync(CreateTextDto createTextDto);
     Task<List<BlockDto>> GetTextsByPageIdAsync(int pageId);
+    Task AddImageAsync(CreateImageDto createImageDto);
+    Task<BlockDto?> GetImageByPageIdAsync(int pageId);
+    Task AddLinkAsync(CreateLinkDto createLinkDto);
+    Task<BlockDto?> GetLinkByPageIdAsync(int pageId);
 }
