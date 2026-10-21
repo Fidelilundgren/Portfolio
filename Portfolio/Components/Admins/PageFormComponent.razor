@@ -1,0 +1,102 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Portfolio.Application.Interfaces
+@using Portfolio.ViewModels
+
+@attribute [Authorize]
+@inject IImageService ImageService
+
+<EditForm Model="Model" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
+
+    <FormCardComponent Title="Title">
+        <div class="form-text">Shown in the menu and browser</div>
+        <InputText class="form-control" @bind-Value="Model.Title" />
+        <ValidationMessage class="text-danger small" For="@(() => Model.Title)" />
+
+        <div class="form-check mt-3">
+            <InputCheckbox class="form-check-input" id="show-in-menu" @bind-Value="Model.AddToMenu" />
+            <label class="form-check-label" for="show-in-menu">Add to menu</label>
+        </div>
+        
+    </FormCardComponent>
+
+    <FormCardComponent Title="Heading">
+        <div class="form-text">The big heading visitors see</div>
+        <InputText class="form-control mb-3" @bind-Value="Model.HeadingText" />
+        <ValidationMessage class="text-danger small" For="@(() => Model.HeadingText)" />
+        <HeadingFormComponent Model="Model.HeadingStyling" Section="heading" />
+    </FormCardComponent>
+
+    <FormCardComponent Title="Text">
+        <InputTextArea class="form-control mb-3" rows="6" @bind-Value="Model.Text" />
+        <ValidationMessage class="text-danger small" For="@(() => Model.Text)" />
+        <HeadingFormComponent Model="Model.TextStyling" Section="text" />
+    </FormCardComponent>
+
+    <FormCardComponent Title="Image">
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="img-fluid mb-2 d-block" style="max-height: 150px;" alt="" />
+
+            <div class="form-check mb-3">
+                <InputCheckbox class="form-check-input" id="remove-image" @bind-Value="Model.RemoveImage" />
+                <label class="form-check-label" for="remove-image">Remove image</label>
+            </div>
+
+            <p class="small text-muted mb-1">Or choose a new file:</p>
+        }
+
+        <InputFile class="form-control mb-3" OnChange="HandleImageUpload" accept=".jpg, .jpeg, .png, .webp, .gif" />
+
+        @if (Model.ImageError != null)
+        {
+            <div class="text-danger small mb-3">@Model.ImageError</div>
+        }
+
+        <ImageFormComponent Model="Model.ImageStyling" />
+    </FormCardComponent>
+
+    <FormCardComponent Title="Link">
+        <label class="form-label">URL:</label>
+        <InputText class="form-control mb-2" @bind-Value="Model.LinkUrl" placeholder="https://" />
+        <ValidationMessage class="text-danger small" For="@(() => Model.LinkUrl)" />
+
+        <label class="form-label">Link text:</label>
+        <InputText class="form-control mb-3" @bind-Value="Model.LinkText" />
+        <ValidationMessage class="text-danger small" For="@(() => Model.LinkText)" />
+
+        <HeadingFormComponent Model="Model.LinkStyling" Section="link" />
+    </FormCardComponent>
+
+    <button type="submit" class="btn btn-primary">@ButtonText</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public PageFormViewModel Model { get; set; } = new();
+
+    [Parameter]
+    public string ButtonText { get; set; } = "Save";
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    private void HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        Model.ImageError = ImageService.Validate(e.File.Name, e.File.Size);
+
+        if (Model.ImageError == null)
+        {
+            Model.UploadedImage = e.File;
+        }
+        else
+        {
+            Model.UploadedImage = null;
+        }
+    }
+
+    private async Task Submit()
+    {
+        await OnValidSubmit.InvokeAsync();
+    }
+}

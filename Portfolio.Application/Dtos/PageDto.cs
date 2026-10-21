@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Portfolio.Application.Dtos;
+﻿namespace Portfolio.Application.Dtos;
 
 public class PageDto
 {
