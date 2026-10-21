@@ -7,123 +7,36 @@
 @using Portfolio.ViewModels
 
 @inject IPageService PageService
-@inject IBlockService BlockService
-@inject NavigationManager Navigation
+@inject IMenuService MenuService
 @inject IImageService ImageService
+@inject NavigationManager Navigation
 
-<div class="container py-4" style="max-width: 800px;">
+<PageTitle>Create page</PageTitle>
+
+<div class="admin-container">
     <h2 class="mb-4">Create Page</h2>
-
-
-    <EditForm Model="viewModel" OnSubmit="AddPage">
-        <DataAnnotationsValidator/>
-
-        <div class="card mb-4">
-            <div class="card-body">
-                <label class="form-label">Page Title:</label>
-                <InputText class="form-control" @bind-Value="viewModel.Title"/>
-                <ValidationMessage class="text-danger small" For="@(() => viewModel.Title)" />
-            </div>
-        </div>
-
-        
-        <div class="card mb-4">
-            <div class="card-header">Heading:</div>
-            <div class="card-body">
-                <InputTextArea class="form-control mb-3" @bind-Value="viewModel.HeadingText" />
-                <ValidationMessage class="text-danger small" For="@(() => viewModel.HeadingText)" />
-                <HeadingFormComponent Model="@viewModel.HeadingStyling" Section="heading" />
-            </div>
-        </div>
-        
-        <div class="card mb-4">
-            <div class="card-header">Text:</div>
-            <div class="card-body">
-                <InputTextArea class="form-control mb-3" @bind-Value="viewModel.Text" />
-                <ValidationMessage class="text-danger small" For="@(() => viewModel.Text)"/>
-                <HeadingFormComponent Model="viewModel.TextStyling" Section="text" />
-            </div>
-        </div>
-
-        <div class="card mb-4">
-            <div class="card-header">Image:</div>
-            <div class="card-body">
-                <InputFile class="form-control" OnChange="HandleImageUpload" accept=".jpg, .jpeg, .png, .webp, .gif" />
-                <ImageFormComponent Model="viewModel.ImageStyling" />
-                @if (viewModel.ImageError != null)
-                {
-                    <div class="text-danger small">@viewModel.ImageError</div>
-                }
-            </div>
-        </div>
-
-        <div class="card mb-4">
-            <div class="card-header">Link:</div>
-            <div class="card-body">
-                <label class="form-label">URL:</label>
-                <InputText class="form-control mb-2" @bind-Value="viewModel.LinkUrl" placeholder="https://" />
-                <ValidationMessage class="text-danger small" For="@(() => viewModel.LinkUrl)"/>
-
-                <label class="form-label">Link text:</label>
-                <InputText class="form-control mb-3" @bind-Value="viewModel.LinkText" />
-                <ValidationMessage class="text-danger small" For="@(() => viewModel.LinkText)" />
-
-                <HeadingFormComponent Model="viewModel.LinkStyling" Section="link" />
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Create Page</button>
-    </EditForm>
+    <PageFormComponent Model="viewModel" ButtonText="Create page" OnValidSubmit="SavePage" />
 </div>
 
 @code {
 
-    public CreatePageViewModel viewModel { get; set; } = new();
+    private PageFormViewModel viewModel = new();
 
-    public async Task AddPage(EditContext editContext)
+    private async Task SavePage()
     {
-        if (!editContext.Validate())
-        {
-            return;
-        }
-
-        int pageId = await PageService.AddAsync(viewModel.ToPageDto());
-
-        await BlockService.AddHeadingAsync(viewModel.ToHeadingDto(pageId));
-
-        if (!string.IsNullOrWhiteSpace(viewModel.Text))
-        {
-            await BlockService.AddTextAsync(viewModel.ToTextDto(pageId));
-        }
-
         if (viewModel.UploadedImage != null)
         {
             await using var stream = viewModel.UploadedImage.OpenReadStream(ImageService.MaxFileSize);
-
-            var imageUrl = await ImageService.SaveAsync(stream, viewModel.UploadedImage.Name);
-
-            await BlockService.AddImageAsync(viewModel.ToImageDto(pageId, imageUrl));
+            viewModel.ImageUrl = await ImageService.SaveAsync(stream, viewModel.UploadedImage.Name);
         }
 
-        if (!string.IsNullOrWhiteSpace(viewModel.LinkUrl))
+        int pageId = await PageService.CreateContentAsync(viewModel.ToDto());
+
+        if (viewModel.AddToMenu)
         {
-            await BlockService.AddLinkAsync(viewModel.ToLinkDto(pageId));
+            await MenuService.AddAsync(viewModel.ToMenuDto(pageId));
         }
 
-        Navigation.NavigateTo($"/page/{pageId}");
-    }
-
-    private void HandleImageUpload(InputFileChangeEventArgs e)
-    {
-        viewModel.ImageError = ImageService.Validate(e.File.Name, e.File.Size);
-
-        if (viewModel.ImageError == null)
-        {
-            viewModel.UploadedImage = e.File;
-        }
-        else
-        {
-            viewModel.UploadedImage = null;
-        }
+        Navigation.NavigateTo("/");
     }
 }

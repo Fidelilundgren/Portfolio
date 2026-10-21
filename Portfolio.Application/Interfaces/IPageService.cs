@@ -5,9 +5,9 @@ namespace Portfolio.Application.Interfaces;
 public interface IPageService
 {
     Task<List<PageDto>> GetAllAsync();
-    Task<PageDto?> GetByIdAsync(int id);
-    Task<int> AddAsync(PageDto dto);
-    Task UpdateAsync(PageDto page);
+    Task<PageContentDto?> GetContentAsync(int pageId);
+    Task<int> CreateContentAsync(PageContentDto dto);
+    Task UpdateContentAsync(PageContentDto dto);
     Task DeleteAsync(int id);
     Task VisitCountAsync(int id);
 }

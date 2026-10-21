@@ -33,7 +33,8 @@ public class MenuService : IMenuService
         {
             Title = menuDto.Title,
             PageId = menuDto.PageId,
-            Order = menus.Count
+            // When a page is deleted its menu item is removed and leaves a gap ex 0, 2 - count give 2 again and then two items with the same
+            Order = menus.Count == 0 ? 0 : menus.Max(m => m.Order) + 1
         };
 
         await _menuRepository.AddAsync(menu);
@@ -82,5 +83,26 @@ public class MenuService : IMenuService
 
         (menus[index], menus[newIndex]) = (menus[newIndex], menus[index]);
         await SaveOrderAsync(menus);
+    }
+
+    public async Task<bool> IsPageInMenuAsync(int pageId)
+    {
+        var menus = await _menuRepository.GetAllAsync();
+        return menus.Any(m => m.PageId == pageId);
+    }
+
+    public async Task SetPageInMenuAsync(MenuDto menuDto, bool showInMenu)
+    {
+        var menus = await _menuRepository.GetAllAsync();
+        var existing = menus.FirstOrDefault(m => m.PageId == menuDto.PageId);
+
+        if (showInMenu && existing == null)
+        {
+            await AddAsync(menuDto);
+        }
+        else if (!showInMenu && existing != null)
+        {
+            await DeleteAsync(existing.Id);
+        }
     }
 }

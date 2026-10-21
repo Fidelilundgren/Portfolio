@@ -13,21 +13,6 @@ public class BlockRepository : IBlockRepository
         _factory = factory;
     }
 
-    public async Task<List<Block>> GetAllAsync()
-    {
-        using var context = await _factory.CreateDbContextAsync();
-
-        return await context
-            .Blocks
-            .OrderBy(b => b.Order).ToListAsync();
-    }
-    public async Task<Block?> GetByIdAsync(int id)
-    {
-        using var context = await _factory.CreateDbContextAsync();
-
-        return await context.Blocks.FindAsync(id);
-    }
-
     public async Task<List<Block>> GetByPageIdAsync(int pageId)
     {
         using var context = await _factory.CreateDbContextAsync();
@@ -46,23 +31,9 @@ public class BlockRepository : IBlockRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Block block)
+    public async Task DeleteByPageIdAsync(int pageId)
     {
         using var context = await _factory.CreateDbContextAsync();
-
-        context.Blocks.Update(block);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        using var context = await _factory.CreateDbContextAsync();
-        var item = await context.Blocks.FindAsync(id);
-
-        if (item != null)
-        {
-            context.Blocks.Remove(item);
-            await context.SaveChangesAsync();
-        }
+        await context.Blocks.Where(b => b.PageId == pageId).ExecuteDeleteAsync();
     }
 }

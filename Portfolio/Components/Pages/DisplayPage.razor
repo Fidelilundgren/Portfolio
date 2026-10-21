@@ -1,52 +1,57 @@
 ﻿@page "/page/{PageId:int}"
 @rendermode InteractiveServer
+
 @using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
 @inject IPageService PageService
-@inject IBlockService BlockService
 
 <div class="container py-5">
-
-    @if (viewModel.Page == null)
+    @if (isLoading)
+    {
+        <p>Loading...</p>
+    }
+    else if (viewModel.Content == null)
     {
         <p>Page not found</p>
     }
     else
     {
-        <PageTitle>@viewModel.Page.Title</PageTitle>
-        @if (viewModel.Heading != null)
+        <PageTitle>@viewModel.Content.Title</PageTitle>
+
+        <h1 class="@viewModel.Content.HeadingCss">@viewModel.Content.HeadingText</h1>
+
+        @if (!string.IsNullOrWhiteSpace(viewModel.Content.Text))
         {
-            <h1 class="@viewModel.Heading.CssClass">@viewModel.Heading.TextContent</h1>
+            <p class="text-block @viewModel.Content.TextCss">@viewModel.Content.Text</p>
         }
 
-        foreach (var block in viewModel.Texts)
+        @if (!string.IsNullOrWhiteSpace(viewModel.Content.ImageUrl))
         {
-            <p class="@block.CssClass">@block.TextContent</p>
+            <img src="@viewModel.Content.ImageUrl" class="img-fluid d-block mb-4 @viewModel.Content.ImageCss" alt="" />
         }
 
-        @if (!string.IsNullOrWhiteSpace(viewModel.Image?.ImageUrl))
+        @if (!string.IsNullOrWhiteSpace(viewModel.Content.LinkUrl))
         {
-            <img src="@viewModel.Image.ImageUrl" class="img-fluid d-block mb-4 @viewModel.Image.CssClass" alt="" />
-        }
-
-        @if (viewModel.Link != null)
-        {
-            <a href="@viewModel.Link.LinkUrl" class="d-block mb-4 @viewModel.Link.CssClass"
-            target="_blank" rel="noopener noreferrer">@viewModel.Link.LinkText</a>
+            <a href="@viewModel.Content.LinkUrl" class="d-block mb-4 @viewModel.Content.LinkCss"
+               target="_blank" rel="noopener noreferrer">@viewModel.Content.LinkText</a>
         }
     }
-    
 </div>
-
 
 
 @code {
     [Parameter]
     public int PageId { get; set; }
 
-    public DisplayPageViewModel viewModel { get; set; } = new();
-
+    private DisplayPageViewModel viewModel = new();
+    private bool isLoading = true;
     private int lastCountedPageId;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        viewModel.Content = await PageService.GetContentAsync(PageId);
+        isLoading = false;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -55,14 +60,5 @@
             lastCountedPageId = PageId;
             await PageService.VisitCountAsync(PageId);
         }
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        viewModel.Page = await PageService.GetByIdAsync(PageId);
-        viewModel.Heading = await BlockService.GetHeadingByPageIdAsync(PageId);
-        viewModel.Texts = await BlockService.GetTextsByPageIdAsync(PageId);
-        viewModel.Image = await BlockService.GetImageByPageIdAsync(PageId);
-        viewModel.Link = await BlockService.GetLinkByPageIdAsync(PageId);
     }
 }
