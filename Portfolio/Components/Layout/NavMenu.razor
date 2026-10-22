@@ -15,7 +15,7 @@
 
         <div class="collapse navbar-collapse" id="siteMenu">
             <ul class="navbar-nav me-auto">
-                @foreach (var item in viewModel.MenuItems)
+                @foreach (var item in viewModel.MenuItems) // menyn som hämtas från api
                 {
                     <li class="nav-item">
                         <NavLink class="nav-link" href="@($"/page/{item.PageId}")">@item.Title</NavLink>
@@ -53,19 +53,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var client = HttpClientFactory.CreateClient("MenuApi");
-        viewModel.MenuItems = await client.GetFromJsonAsync<List<MenuDto>>("api/menu") ?? [];
+        var client = HttpClientFactory.CreateClient("MenuApi"); //Hämtar den httpclient jag skapat i program.cs
+        viewModel.MenuItems = await client.GetFromJsonAsync<List<MenuDto>>("api/menu") ?? []; //Anropar och hämtar
     }
     
     protected override void OnInitialized()
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri); //Sparar vilken sida man är på
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location); //Uppdaterar när man byter sida
         StateHasChanged();
     }
 

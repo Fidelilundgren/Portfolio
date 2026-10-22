@@ -1,8 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using Portfolio.Application.Interfaces
 @using Portfolio.ViewModels
-
-@attribute [Authorize]
 @inject IImageService ImageService
 
 <EditForm Model="Model" OnValidSubmit="Submit">

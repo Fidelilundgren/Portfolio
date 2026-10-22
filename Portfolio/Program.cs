@@ -20,7 +20,7 @@ namespace Portfolio
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
-
+            
             builder.Services.AddControllers();
 
             builder.Services.AddHttpClient("MenuApi", client => 
@@ -28,6 +28,7 @@ namespace Portfolio
                 client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
             });
 
+            // Fixes crashes when two things use the database at the same time
             builder.Services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection"),
                 sqlOptions => sqlOptions.EnableRetryOnFailure()));
