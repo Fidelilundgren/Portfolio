@@ -173,3 +173,9 @@ h1:focus {
     white-space: pre-line;
 }
 
+.page-card-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+

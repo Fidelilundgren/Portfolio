@@ -6,7 +6,7 @@ namespace Portfolio.Controllers;
 
 [ApiController]
 [Route("api/Menu")]
-public class MenuController : Controller
+public class MenuController : ControllerBase
 {
     private readonly IMenuService _menuService;
 

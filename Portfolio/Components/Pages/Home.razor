@@ -1,22 +1,70 @@
 ﻿@page "/"
 @using Portfolio.Application.Interfaces
-@inject IMenuService MenuService
+@using Portfolio.ViewModels
+@inject IPageService PageService
 
-@if (startPageId != null)
-{
-    <DisplayPage PageId="startPageId.Value" />
-}
-else 
-{
-    <div class="container py-5"></div>
-}
+<PageTitle>Portfolio</PageTitle>
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Pages</h1>
+
+    @if (viewModel.Pages.Count == 0)
+    {
+        <p>No pages yet.</p>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in viewModel.Pages)
+            {
+                var imageUrl = viewModel.GetImageUrl(item.Id);
+
+                <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+
+                    @if (imageUrl != null)
+                    {
+                        <img src="@imageUrl"
+                                class="card-img-top page-card-image"
+                                alt="@item.Title" />
+                    }
+
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+
+                        <p class="card-text">
+                            Visits: @item.VisitCount
+                        </p>
+
+                        <a href="/page/@item.Id" class="btn btn-primary">
+                            View page
+                        </a>
+                    </div>
+
+                </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
 
 @code {
-    private int? startPageId;
+    private HomeViewModel viewModel = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var menu = await MenuService.GetAllAsync();
-        startPageId = menu.FirstOrDefault()?.PageId;
+        viewModel.Pages = await PageService.GetAllAsync();
+
+        foreach (var item in viewModel.Pages)
+        {
+            var content = await PageService.GetContentAsync(item.Id);
+
+            if (content != null)
+            {
+                viewModel.PageContents[item.Id] = content;
+            }
+        }
     }
 }
